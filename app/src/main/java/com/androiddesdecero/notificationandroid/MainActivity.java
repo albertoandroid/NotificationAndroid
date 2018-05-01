@@ -19,8 +19,10 @@ public class MainActivity extends AppCompatActivity {
 
     private Button btNotificacion;
     private PendingIntent pendingIntent;
+    private PendingIntent siPendingIntent;
+    private PendingIntent noPendingIntent;
     private final static String CHANNEL_ID = "NOTIFICACION";
-    private final static int NOTIFICACION_ID = 0;
+    public final static int NOTIFICACION_ID = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,10 +34,27 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 setPendingIntent();
+                setSiPendingIntent();
+                setNoPendingIntent();
                 createNotificationChannel();
                 createNotification();
             }
         });
+    }
+
+    private void setSiPendingIntent(){
+        Intent intent = new Intent(this, SiActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(SiActivity.class);
+        stackBuilder.addNextIntent(intent);
+        siPendingIntent = stackBuilder.getPendingIntent(1, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+    private void setNoPendingIntent(){
+        Intent intent = new Intent(this, NoActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(NoActivity.class);
+        stackBuilder.addNextIntent(intent);
+        noPendingIntent = stackBuilder.getPendingIntent(1, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private void setPendingIntent(){
@@ -67,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
         builder.setDefaults(Notification.DEFAULT_SOUND);
 
         builder.setContentIntent(pendingIntent);
+        builder.addAction(R.drawable.ic_sms_black_24dp, "Si", siPendingIntent);
+        builder.addAction(R.drawable.ic_sms_black_24dp, "No", noPendingIntent);
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
         notificationManagerCompat.notify(NOTIFICACION_ID, builder.build());
