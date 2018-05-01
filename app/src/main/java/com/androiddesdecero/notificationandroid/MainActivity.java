@@ -4,6 +4,8 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
@@ -29,10 +31,19 @@ public class MainActivity extends AppCompatActivity {
         btNotificacion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                setPendingIntent();
                 createNotificationChannel();
                 createNotification();
             }
         });
+    }
+
+    private void setPendingIntent(){
+        Intent intent = new Intent(this, NotificacionActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+        stackBuilder.addParentStack(NotificacionActivity.class);
+        stackBuilder.addNextIntent(intent);
+        pendingIntent = stackBuilder.getPendingIntent(1, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private void createNotificationChannel(){
@@ -54,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
         builder.setLights(Color.MAGENTA, 1000, 1000);
         builder.setVibrate(new long[]{1000,1000,1000,1000,1000});
         builder.setDefaults(Notification.DEFAULT_SOUND);
+
+        builder.setContentIntent(pendingIntent);
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
         notificationManagerCompat.notify(NOTIFICACION_ID, builder.build());
